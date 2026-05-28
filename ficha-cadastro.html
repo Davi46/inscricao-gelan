@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha de Cadastro – Grupo Escoteiro Gelan</title>
+  <style>
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde:    #2d6a2d;
+      --verde-md: #3a8a3a;
+      --verde-lt: #e8f5e8;
+      --amarelo:  #f5a623;
+      --amarelo-lt: #fff8ed;
+      --branco:   #ffffff;
+      --cinza-bg: #f4f6f4;
+      --cinza-borda: #c8d8c8;
+      --cinza-txt: #555;
+      --erro:     #d32f2f;
+      --erro-bg:  #ffebee;
+      --radius:   10px;
+      --shadow:   0 4px 20px rgba(0,0,0,.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--cinza-bg);
+      color: #222;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--verde);
+      color: var(--branco);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    header img {
+      height: 64px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+    }
+    header .header-text h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+    header .header-text p {
+      font-size: .85rem;
+      opacity: .85;
+      margin-top: 2px;
+    }
+
+    /* ── WRAPPER ── */
+    .wrapper {
+      max-width: 820px;
+      margin: 32px auto 48px;
+      padding: 0 16px;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrapper {
+      background: var(--branco);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .progress-label {
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--verde);
+    }
+    .progress-counter {
+      font-size: .82rem;
+      color: var(--cinza-txt);
+    }
+    .progress-bar-bg {
+      background: #dde8dd;
+      border-radius: 99px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      background: linear-gradient(90deg, var(--verde-md), var(--amarelo));
+      height: 100%;
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+    .steps-dots {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .step-dot {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+      font-size: .7rem;
+      color: #aaa;
+      cursor: default;
+      transition: color .3s;
+    }
+    .step-dot .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #dde8dd;
+      margin: 0 auto 4px;
+      transition: background .3s, transform .3s;
+    }
+    .step-dot.active .dot  { background: var(--amarelo); transform: scale(1.3); }
+    .step-dot.done .dot    { background: var(--verde-md); }
+    .step-dot.active       { color: var(--verde); font-weight: 700; }
+    .step-dot.done         { color: var(--verde-md); }
+    .step-dot.disabled     { opacity: .3; }
+    .step-dot.disabled .dot { background: #ccc; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--branco);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--verde-lt);
+    }
+    .section-icon {
+      width: 40px; height: 40px;
+      background: var(--verde-lt);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 1.15rem;
+      color: var(--verde);
+      font-weight: 700;
+    }
+    .section-header p {
+      font-size: .82rem;
+      color: var(--cinza-txt);
+      margin-top: 2px;
+    }
+
+    /* ── FORM GRID ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 20px;
+    }
+    .col-1 { grid-column: span 1; }
+    .col-2 { grid-column: span 2; }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .col-1, .col-2 { grid-column: span 1; }
+      .card { padding: 20px 16px; }
+      header { flex-wrap: wrap; }
+    }
+
+    /* ── FIELD ── */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: .875rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .field label .req { color: var(--erro); margin-left: 2px; }
+    .field input,
+    .field select,
+    .field textarea {
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-size: .925rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      background: #fafcfa;
+      color: #222;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--verde-md);
+      box-shadow: 0 0 0 3px rgba(58,138,58,.15);
+      background: var(--branco);
+    }
+    .field input.invalid,
+    .field select.invalid,
+    .field textarea.invalid {
+      border-color: var(--erro);
+      background: var(--erro-bg);
+    }
+    .field .error-msg {
+      font-size: .78rem;
+      color: var(--erro);
+      display: none;
+    }
+    .field .error-msg.show { display: block; }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    /* ── RADIO / CHECKBOX GROUP ── */
+    .radio-group, .check-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .radio-group label,
+    .check-group label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 400;
+      font-size: .9rem;
+      cursor: pointer;
+      background: var(--cinza-bg);
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: 20px;
+      padding: 6px 14px;
+      transition: background .2s, border-color .2s;
+      user-select: none;
+    }
+    .radio-group input[type="radio"],
+    .check-group input[type="checkbox"] { accent-color: var(--verde-md); }
+    .radio-group label:has(input:checked),
+    .check-group label:has(input:checked) {
+      background: var(--verde-lt);
+      border-color: var(--verde-md);
+      color: var(--verde);
+      font-weight: 600;
+    }
+
+    /* ── CONDITIONAL BLOCK ── */
+    .conditional {
+      background: var(--amarelo-lt);
+      border: 1.5px dashed var(--amarelo);
+      border-radius: 8px;
+      padding: 14px 16px;
+      grid-column: span 2;
+      display: none;
+    }
+    .conditional.show { display: block; }
+    .conditional .field label { color: #7a5100; }
+    .conditional .field input,
+    .conditional .field select,
+    .conditional .field textarea {
+      background: #fffcf5;
+      border-color: #e6c060;
+    }
+    .conditional .field input:focus,
+    .conditional .field select:focus,
+    .conditional .field textarea:focus {
+      border-color: var(--amarelo);
+      box-shadow: 0 0 0 3px rgba(245,166,35,.2);
+    }
+
+    /* ── RESPONSÁVEL BLOCK ── */
+    .responsavel-block {
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: #fafcfa;
+    }
+    .responsavel-block h3 {
+      font-size: .95rem;
+      color: var(--verde);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .responsavel-block .badge {
+      background: var(--verde-lt);
+      color: var(--verde);
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: .75rem;
+    }
+
+    /* ── INFO BOX ── */
+    .info-box {
+      background: var(--verde-lt);
+      border: 1.5px solid #b2d9b2;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: .85rem;
+      color: var(--verde);
+      grid-column: span 2;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .info-box::before { content: 'ℹ️'; flex-shrink: 0; }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 11px 28px;
+      border-radius: 7px;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background .2s, transform .1s, box-shadow .2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-back {
+      background: var(--branco);
+      color: var(--verde);
+      border: 1.5px solid var(--verde-md);
+    }
+    .btn-back:hover { background: var(--verde-lt); }
+    .btn-next {
+      background: var(--verde);
+      color: var(--branco);
+      box-shadow: 0 2px 8px rgba(45,106,45,.35);
+    }
+    .btn-next:hover { background: var(--verde-md); box-shadow: 0 4px 12px rgba(45,106,45,.4); }
+    .btn-submit {
+      background: var(--amarelo);
+      color: var(--branco);
+      box-shadow: 0 2px 8px rgba(245,166,35,.4);
+    }
+    .btn-submit:hover { background: #e0951a; }
+    .btn-submit:disabled { opacity: .7; cursor: not-allowed; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SELECT MULTIPLE ── */
+    .field select[multiple] {
+      height: auto;
+      min-height: 110px;
+      padding: 6px;
+    }
+    .field select[multiple] option { padding: 5px 8px; border-radius: 4px; }
+
+    /* ── HIDDEN SECTION ── */
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    /* ── SUCCESS ── */
+    #success-msg {
+      display: none;
+      text-align: center;
+      padding: 48px 32px;
+    }
+    #success-msg .check-circle {
+      width: 80px; height: 80px;
+      background: var(--verde-lt);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem;
+      margin: 0 auto 20px;
+    }
+    #success-msg h2 { font-size: 1.5rem; color: var(--verde); margin-bottom: 10px; }
+    #success-msg p  { color: var(--cinza-txt); font-size: .95rem; }
+
+    /* ── HELPER TEXT ── */
+    .helper-text {
+      font-size: .77rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      grid-column: span 2;
+      border: none;
+      border-top: 1.5px solid var(--verde-lt);
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <img src="https://www.gelan.com.br/wp-content/uploads/2020/01/logo_gelan_branco.png"
+       onerror="this.style.display='none'"
+       alt="Logo Gelan" />
+  <div class="header-text">
+    <h1>Grupo Escoteiro Gelan</h1>
+    <p>Ficha de Cadastro para Novos Membros</p>
+  </div>
+</header>
+
+<div class="wrapper">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrapper">
+    <div class="progress-info">
+      <span class="progress-label" id="prog-label">Etapa 1 de 8</span>
+      <span class="progress-counter" id="prog-section-name">Dados Pessoais</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="prog-fill" style="width:12.5%"></div>
+    </div>
+    <div class="steps-dots" id="steps-dots"></div>
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 1 – DADOS PESSOAIS
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section active" id="sec-1">
+      <div class="section-header">
+        <div class="section-icon">👤</div>
+        <div>
+          <h2>Dados Pessoais</h2>
+          <p>Informações de identificação do candidato</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- Nome do Candidato -->
+        <div class="field col-2">
+          <label>Nome Completo do Candidato <span class="req">*</span></label>
+          <input type="text" id="nome_candidato" placeholder="Nome completo" />
+          <span class="error-msg" id="err-nome_candidato">Campo obrigatório.</span>
+        </div>
+
+        <!-- Nome Social -->
+        <div class="field col-2">
+          <label>Nome Social</label>
+          <input type="text" id="nome_social" placeholder="Nome pelo qual prefere ser chamado(a) (opcional)" />
+        </div>
+
+        <!-- Data de Nascimento -->
+        <div class="field col-1">
+          <label>Data de Nascimento <span class="req">*</span></label>
+          <input type="date" id="data_nascimento" />
+          <span class="error-msg" id="err-data_nascimento">Data inválida ou obrigatória. A data de nascimento deve ser anterior a hoje.</span>
+        </div>
+
+        <!-- Sexo -->
+        <div class="field col-1">
+          <label>Sexo <span class="req">*</span></label>
+          <div class="radio-group" id="sexo-group">
+            <label><input type="radio" name="sexo" value="Feminino" /> Feminino</label>
+            <label><input type="radio" name="sexo" value="Masculino" /> Masculino</label>
+          </div>
+          <span class="error-msg" id="err-sexo">Selecione uma opção.</span>
+        </div>
+
+        <!-- Etnia -->
+        <div class="field col-1">
+          <label>Etnia / Cor <span class="req">*</span></label>
+          <select id="etnia">
+            <option value="">Selecione...</option>
+            <option>Amarela</option>
+            <option>Branca</option>
+            <option>Indígena</option>
+            <option>Parda</option>
+            <option>Preta</option>
+            <option>Não Desejo Informar</option>
+          </select>
+          <span class="error-msg" id="err-etnia">Campo obrigatório.</span>
+        </div>
+
+        <!-- Estado Civil -->
+        <div class="field col-1">
+          <label>Estado Civil <span class="req">*</span></label>
+          <select id="estado_civil">
+            <option value="">Selecione...</option>
+            <option>Não Informado</option>
+            <option>Solteiro(a)</option>
+            <option>Casado(a)</option>
+            <option>Divorciado(a)</option>
+            <option>Viúvo(a)</option>
+          </select>
+          <span class="error-msg" id="err-estado_civil">Campo obrigatório.</span>
+        </div>
+
+        <!-- É estrangeiro -->
+        <div class="field col-1">
+          <label>É Estrangeiro(a)? <span class="req">*</span></label>
+          <div class="radio-group" id="estrangeiro-group">
+            <label><input type="radio" name="estrangeiro" value="Sim" onchange="toggleEstrangeiro()" /> Sim</label>
+            <label><input type="radio" name="estrangeiro" value="Não" onchange="toggleEstrangeiro()" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-estrangeiro">Selecione uma opção.</span>
+        </div>
+
+        <!-- País de Nascimento -->
+        <div class="field col-1">
+          <label>País de Nascimento <span class="req">*</span></label>
+          <input type="text" id="pais_nascimento" value="Brasil" />
+          <span class="error-msg" id="err-pais_nascimento">Campo obrigatório.</span>
+        </div>
+
+        <!-- Estado de Nascimento -->
+        <div class="field col-1" id="field-estado-nasc">
+          <label>Estado de Nascimento <span class="req">*</span></label>
+          <select id="estado_nascimento">
+            <option value="">Selecione...</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+          <span class="error-msg" id="err-estado_nascimento">Campo obrigatório.</span>
+        </div>
+
+        <!-- Cidade de Nascimento -->
+        <div class="field col-1">
+          <label>Cidade de Nascimento <span class="req">*</span></label>
+          <input type="text" id="cidade_nascimento" placeholder="Ex: Belo Horizonte" />
+          <span class="error-msg" id="err-cidade_nascimento">Campo obrigatório.</span>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- CPF -->
+        <div class="field col-1">
+          <label>CPF <span class="req">*</span></label>
+          <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)" />
+          <span class="error-msg" id="err-cpf">CPF inválido ou obrigatório.</span>
+        </div>
+
+        <!-- RG -->
+        <div class="field col-1">
+          <label>RG</label>
+          <input type="text" id="rg" placeholder="Número do RG" />
+        </div>
+
+        <!-- Órgão Expeditor -->
+        <div class="field col-1">
+          <label>Órgão Expeditor do RG</label>
+          <input type="text" id="orgao_expeditor" placeholder="Ex: SSP/MG" />
+        </div>
+
+        <!-- Religião -->
+        <div class="field col-1">
+          <label>Religião</label>
+          <input type="text" id="religiao" placeholder="Opcional" />
+        </div>
+
+        <hr class="divider" />
+
+        <!-- E-mail -->
+        <div class="field col-1">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="exemplo@email.com" />
+          <span class="error-msg" id="err-email">E-mail inválido ou obrigatório.</span>
+        </div>
+
+        <!-- Celular -->
+        <div class="field col-1">
+          <label>Celular <span class="req">*</span></label>
+          <input type="tel" id="celular" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(this)" />
+          <span class="error-msg" id="err-celular">Número inválido ou obrigatório.</span>
+        </div>
+
+      </div><!-- /form-grid -->
+    </div><!-- /sec-1 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 2 – INFORMAÇÕES PROFISSIONAIS E ACADÊMICAS
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section" id="sec-2">
+      <div class="section-header">
+        <div class="section-icon">🎓</div>
+        <div>
+          <h2>Informações Profissionais e Acadêmicas</h2>
+          <p>Escolaridade e situação profissional</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- Escolaridade -->
+        <div class="field col-1">
+          <label>Escolaridade <span class="req">*</span></label>
+          <select id="escolaridade">
+            <option value="">Selecione...</option>
+            <option>Educação Infantil</option>
+            <option>Ensino Fundamental Incompleto</option>
+            <option>Ensino Fundamental Completo</option>
+            <option>Ensino Médio Incompleto</option>
+            <option>Ensino Médio Completo</option>
+            <option>Ensino Superior Incompleto</option>
+            <option>Ensino Superior Completo</option>
+            <option>Pós-Graduação / Especialização</option>
+            <option>Mestrado</option>
+            <option>Doutorado</option>
+          </select>
+          <span class="error-msg" id="err-escolaridade">Campo obrigatório.</span>
+        </div>
+
+        <!-- Profissão -->
+        <div class="field col-1">
+          <label>Profissão <span class="req">*</span></label>
+          <input type="text" id="profissao" placeholder="Ex: Estudante, Engenheiro, Professor..." />
+          <span class="error-msg" id="err-profissao">Campo obrigatório.</span>
+        </div>
+
+      </div>
+    </div><!-- /sec-2 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 3 – ENDEREÇO
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section" id="sec-3">
+      <div class="section-header">
+        <div class="section-icon">🏠</div>
+        <div>
+          <h2>Endereço</h2>
+          <p>Endereço residencial do candidato</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- CEP -->
+        <div class="field col-1">
+          <label>CEP <span class="req">*</span></label>
+          <input type="text" id="cep" placeholder="00000-000" maxlength="9" oninput="maskCEP(this)" onblur="buscaCEP()" />
+          <span class="helper-text">Digite o CEP para preencher automaticamente</span>
+          <span class="error-msg" id="err-cep">CEP inválido ou obrigatório.</span>
+        </div>
+
+        <div class="col-1"></div>
+
+        <!-- Endereço -->
+        <div class="field col-2">
+          <label>Endereço (Rua/Avenida) <span class="req">*</span></label>
+          <input type="text" id="endereco" placeholder="Nome da rua, avenida..." />
+          <span class="error-msg" id="err-endereco">Campo obrigatório.</span>
+        </div>
+
+        <!-- Número -->
+        <div class="field col-1">
+          <label>Número <span class="req">*</span></label>
+          <input type="text" id="numero_end" placeholder="Ex: 123" />
+          <span class="error-msg" id="err-numero_end">Campo obrigatório.</span>
+        </div>
+
+        <!-- Complemento -->
+        <div class="field col-1">
+          <label>Complemento</label>
+          <input type="text" id="complemento" placeholder="Apto, Bloco... (opcional)" />
+        </div>
+
+        <!-- Bairro -->
+        <div class="field col-1">
+          <label>Bairro <span class="req">*</span></label>
+          <input type="text" id="bairro" placeholder="Nome do bairro" />
+          <span class="error-msg" id="err-bairro">Campo obrigatório.</span>
+        </div>
+
+        <!-- Cidade -->
+        <div class="field col-1">
+          <label>Cidade <span class="req">*</span></label>
+          <input type="text" id="cidade_end" placeholder="Nome da cidade" />
+          <span class="error-msg" id="err-cidade_end">Campo obrigatório.</span>
+        </div>
+
+        <!-- Estado -->
+        <div class="field col-1">
+          <label>Estado <span class="req">*</span></label>
+          <select id="estado_end">
+            <option value="">Selecione...</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+          <span class="error-msg" id="err-estado_end">Campo obrigatório.</span>
+        </div>
+
+      </div>
+    </div><!-- /sec-3 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 4 – FICHA MÉDICA: DADOS BIOMÉTRICOS
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section" id="sec-4">
+      <div class="section-header">
+        <div class="section-icon">📏</div>
+        <div>
+          <h2>Ficha Médica – Dados Biométricos</h2>
+          <p>Informações físicas do candidato</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- Altura -->
+        <div class="field col-1">
+          <label>Altura (m) <span class="req">*</span></label>
+          <input type="number" id="altura" placeholder="Ex: 1.75" min="0.5" max="2.5" step="0.01" />
+          <span class="error-msg" id="err-altura">Campo obrigatório. Ex: 1.75</span>
+        </div>
+
+        <!-- Peso -->
+        <div class="field col-1">
+          <label>Peso (kg) <span class="req">*</span></label>
+          <input type="number" id="peso" placeholder="Ex: 70.5" min="1" max="300" step="0.1" />
+          <span class="error-msg" id="err-peso">Campo obrigatório. Ex: 70.5</span>
+        </div>
+
+        <!-- Tipo Sanguíneo -->
+        <div class="field col-1">
+          <label>Tipo Sanguíneo <span class="req">*</span></label>
+          <select id="tipo_sanguineo">
+            <option value="">Selecione...</option>
+            <option>A</option>
+            <option>B</option>
+            <option>AB</option>
+            <option>O</option>
+            <option>Não Sei</option>
+          </select>
+          <span class="error-msg" id="err-tipo_sanguineo">Campo obrigatório.</span>
+        </div>
+
+        <!-- Fator RH -->
+        <div class="field col-1">
+          <label>Fator RH <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="fator_rh" value="Positivo" /> Positivo (+)</label>
+            <label><input type="radio" name="fator_rh" value="Negativo" /> Negativo (−)</label>
+          </div>
+          <span class="error-msg" id="err-fator_rh">Selecione uma opção.</span>
+        </div>
+
+      </div>
+    </div><!-- /sec-4 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 5 – FICHA MÉDICA: SAÚDE FÍSICA E MENTAL
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section" id="sec-5">
+      <div class="section-header">
+        <div class="section-icon">🩺</div>
+        <div>
+          <h2>Ficha Médica – Saúde Física e Mental</h2>
+          <p>Condições de saúde relevantes para atividades escoteiras</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- Utiliza Equipamento de Auxílio -->
+        <div class="field col-2">
+          <label>Utiliza Equipamento de Auxílio? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="eq_auxilio" value="Sim" onchange="toggleConditional('cond-eq_auxilio','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="eq_auxilio" value="Não" onchange="toggleConditional('cond-eq_auxilio','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-eq_auxilio">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-eq_auxilio">
+          <div class="field">
+            <label>Qual equipamento utiliza?</label>
+            <input type="text" id="desc_eq_auxilio" placeholder="Ex: Cadeira de rodas, muleta, óculos..." />
+          </div>
+        </div>
+
+        <!-- Faz Acompanhamento Médico Regular -->
+        <div class="field col-2">
+          <label>Faz Acompanhamento Médico Regular? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="acomp_medico" value="Sim" onchange="toggleConditional('cond-acomp_medico','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="acomp_medico" value="Não" onchange="toggleConditional('cond-acomp_medico','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-acomp_medico">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-acomp_medico">
+          <div class="field">
+            <label>Qual acompanhamento realiza?</label>
+            <input type="text" id="desc_acomp_medico" placeholder="Ex: Cardiologista, psicólogo..." />
+          </div>
+        </div>
+
+        <!-- Apresenta Problema Crônico de Saúde -->
+        <div class="field col-2">
+          <label>Apresenta Algum Problema Crônico de Saúde? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="prob_cronico" value="Sim" onchange="toggleConditional('cond-prob_cronico','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="prob_cronico" value="Não" onchange="toggleConditional('cond-prob_cronico','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-prob_cronico">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-prob_cronico">
+          <div class="field">
+            <label>Qual problema crônico?</label>
+            <input type="text" id="desc_prob_cronico" placeholder="Ex: Diabetes, hipertensão, asma..." />
+          </div>
+        </div>
+
+        <!-- Alergias -->
+        <div class="field col-2">
+          <label>Possui Alguma Alergia? (alimentos, medicamentos, picadas, plantas, etc.) <span class="req">*</span></label>
+          <input type="text" id="alergias" placeholder="Descreva as alergias ou escreva 'Nenhuma'" />
+          <span class="error-msg" id="err-alergias">Campo obrigatório.</span>
+        </div>
+
+        <!-- Transtorno ou Condição -->
+        <div class="field col-2">
+          <label>Apresenta Algum Transtorno ou Condição? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="transtorno" value="Sim" onchange="toggleConditional('cond-transtorno','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="transtorno" value="Não" onchange="toggleConditional('cond-transtorno','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-transtorno">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-transtorno">
+          <div class="field">
+            <label>Qual transtorno ou condição?</label>
+            <input type="text" id="desc_transtorno" placeholder="Ex: TDAH, ansiedade, depressão, TEA..." />
+          </div>
+        </div>
+
+        <!-- Medicação para transtorno -->
+        <div class="field col-2">
+          <label>Faz Uso de Medicação para o Transtorno? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="med_transtorno" value="Sim" onchange="toggleConditional('cond-med_transtorno','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="med_transtorno" value="Não" onchange="toggleConditional('cond-med_transtorno','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-med_transtorno">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-med_transtorno">
+          <div class="field">
+            <label>Qual medicamento?</label>
+            <input type="text" id="desc_med_transtorno" placeholder="Nome do medicamento e dosagem" />
+          </div>
+        </div>
+
+        <!-- Acompanhamento profissional -->
+        <div class="field col-2">
+          <label>Faz Acompanhamento com Profissional de Saúde Mental? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="acomp_profissional" value="Sim" /> Sim</label>
+            <label><input type="radio" name="acomp_profissional" value="Não" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-acomp_profissional">Selecione uma opção.</span>
+        </div>
+
+        <!-- Condições (multiselect) -->
+        <div class="field col-2">
+          <label>Possui Alguma das Condições Abaixo? <span class="req">*</span></label>
+          <div class="check-group">
+            <label><input type="checkbox" name="condicoes" value="Nenhuma" onchange="handleNenhumaCheck(this,'condicoes')" /> Nenhuma</label>
+            <label><input type="checkbox" name="condicoes" value="Deficiência Física" onchange="handleNenhumaCheck(this,'condicoes')" /> Deficiência Física</label>
+            <label><input type="checkbox" name="condicoes" value="Deficiência Visual" onchange="handleNenhumaCheck(this,'condicoes')" /> Deficiência Visual</label>
+            <label><input type="checkbox" name="condicoes" value="Deficiência Auditiva" onchange="handleNenhumaCheck(this,'condicoes')" /> Deficiência Auditiva</label>
+            <label><input type="checkbox" name="condicoes" value="Deficiência Intelectual" onchange="handleNenhumaCheck(this,'condicoes')" /> Deficiência Intelectual</label>
+            <label><input type="checkbox" name="condicoes" value="Autismo (TEA)" onchange="handleNenhumaCheck(this,'condicoes')" /> Autismo (TEA)</label>
+          </div>
+          <span class="error-msg" id="err-condicoes">Selecione ao menos uma opção.</span>
+        </div>
+
+        <!-- Comportamentos (multiselect) -->
+        <div class="field col-2">
+          <label>Possui Algum dos Comportamentos Listados? <span class="req">*</span></label>
+          <div class="check-group">
+            <label><input type="checkbox" name="comportamentos" value="Nenhum" onchange="handleNenhumaCheck(this,'comportamentos')" /> Nenhum</label>
+            <label><input type="checkbox" name="comportamentos" value="Dificuldade de obedecer instruções verbais" onchange="handleNenhumaCheck(this,'comportamentos')" /> Dificuldade de obedecer instruções verbais</label>
+            <label><input type="checkbox" name="comportamentos" value="Dificuldades alimentares" onchange="handleNenhumaCheck(this,'comportamentos')" /> Dificuldades alimentares</label>
+            <label><input type="checkbox" name="comportamentos" value="Crises em que agrida a si mesmo" onchange="handleNenhumaCheck(this,'comportamentos')" /> Crises em que agrida a si mesmo</label>
+            <label><input type="checkbox" name="comportamentos" value="Dificuldade de sono" onchange="handleNenhumaCheck(this,'comportamentos')" /> Dificuldade de sono</label>
+            <label><input type="checkbox" name="comportamentos" value="Crises em que agrida os outros" onchange="handleNenhumaCheck(this,'comportamentos')" /> Crises em que agrida os outros</label>
+            <label><input type="checkbox" name="comportamentos" value="Tendência a fugas" onchange="handleNenhumaCheck(this,'comportamentos')" /> Tendência a fugas</label>
+            <label><input type="checkbox" name="comportamentos" value="Dificuldades de comunicação" onchange="handleNenhumaCheck(this,'comportamentos')" /> Dificuldades de comunicação</label>
+            <label><input type="checkbox" name="comportamentos" value="Crises de ansiedade ou pânico" onchange="handleNenhumaCheck(this,'comportamentos')" /> Crises de ansiedade ou pânico</label>
+            <label><input type="checkbox" name="comportamentos" value="Comportamento auto-destrutivo" onchange="handleNenhumaCheck(this,'comportamentos')" /> Comportamento auto-destrutivo</label>
+            <label><input type="checkbox" name="comportamentos" value="Agitação psicomotora que atrapalhe a concentração" onchange="handleNenhumaCheck(this,'comportamentos')" /> Agitação psicomotora que atrapalhe a concentração</label>
+          </div>
+          <span class="error-msg" id="err-comportamentos">Selecione ao menos uma opção.</span>
+        </div>
+
+        <!-- Uso de medicamento -->
+        <div class="field col-2">
+          <label>Faz Uso de Algum Medicamento? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="usa_medicamento" value="Sim" onchange="toggleConditional('cond-usa_medicamento','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="usa_medicamento" value="Não" onchange="toggleConditional('cond-usa_medicamento','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-usa_medicamento">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-usa_medicamento">
+          <div class="field">
+            <label>Liste o(s) medicamento(s), indicando se é de uso contínuo ou não:</label>
+            <textarea id="desc_medicamentos" placeholder="Ex: Ritalina 10mg – uso contínuo&#10;Dipirona – uso eventual"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /sec-5 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 6 – FICHA MÉDICA: INFORMAÇÕES GERAIS
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section" id="sec-6">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <div>
+          <h2>Ficha Médica – Informações Gerais</h2>
+          <p>Informações adicionais de saúde e emergência</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- Impedimento Físico -->
+        <div class="field col-2">
+          <label>Possui Impedimento Físico para Atividades? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="impeditivo_fisico" value="Sim" onchange="toggleConditional('cond-impeditivo_fisico','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="impeditivo_fisico" value="Não" onchange="toggleConditional('cond-impeditivo_fisico','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-impeditivo_fisico">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-impeditivo_fisico">
+          <div class="field">
+            <label>Qual impedimento?</label>
+            <input type="text" id="desc_impeditivo_fisico" placeholder="Descreva o impedimento físico" />
+          </div>
+        </div>
+
+        <!-- Restrição Alimentar -->
+        <div class="field col-2">
+          <label>Possui Restrição Alimentar? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="restricao_alimentar" value="Sim" onchange="toggleConditional('cond-restricao_alimentar','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="restricao_alimentar" value="Não" onchange="toggleConditional('cond-restricao_alimentar','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-restricao_alimentar">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-restricao_alimentar">
+          <div class="field">
+            <label>Qual restrição alimentar?</label>
+            <input type="text" id="desc_restricao_alimentar" placeholder="Ex: Intolerância à lactose, vegetariano, celíaco..." />
+          </div>
+        </div>
+
+        <!-- Sabe Nadar -->
+        <div class="field col-1">
+          <label>Sabe Nadar? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="sabe_nadar" value="Sim" /> Sim</label>
+            <label><input type="radio" name="sabe_nadar" value="Não" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-sabe_nadar">Selecione uma opção.</span>
+        </div>
+
+        <!-- Sonâmbulo -->
+        <div class="field col-1">
+          <label>É Sonâmbulo(a)? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="sonambulo" value="Sim" /> Sim</label>
+            <label><input type="radio" name="sonambulo" value="Não" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-sonambulo">Selecione uma opção.</span>
+        </div>
+
+        <!-- Plano de Saúde -->
+        <div class="field col-2">
+          <label>Utiliza Plano de Saúde? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="plano_saude" value="Sim" onchange="toggleConditional('cond-plano_saude','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="plano_saude" value="Não" onchange="toggleConditional('cond-plano_saude','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-plano_saude">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-plano_saude">
+          <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="field">
+              <label>Qual plano de saúde?</label>
+              <input type="text" id="nome_plano_saude" placeholder="Ex: Unimed, Bradesco Saúde..." />
+            </div>
+            <div class="field">
+              <label>Número da Carteirinha</label>
+              <input type="text" id="num_carteirinha" placeholder="Número do convênio" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Médico de Preferência -->
+        <div class="field col-2">
+          <label>Possui Médico de Preferência? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="medico_pref" value="Sim" onchange="toggleConditional('cond-medico_pref','Sim',this)" /> Sim</label>
+            <label><input type="radio" name="medico_pref" value="Não" onchange="toggleConditional('cond-medico_pref','Sim',this)" /> Não</label>
+          </div>
+          <span class="error-msg" id="err-medico_pref">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-medico_pref">
+          <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="field">
+              <label>Nome do Médico</label>
+              <input type="text" id="nome_medico_pref" placeholder="Dr(a). Nome completo" />
+            </div>
+            <div class="field">
+              <label>Contato do Médico</label>
+              <input type="tel" id="contato_medico_pref" placeholder="(00) 0000-0000" maxlength="15" oninput="maskPhone(this)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Conduta em Emergência -->
+        <div class="field col-2">
+          <label>Em Caso de Emergência, Qual Conduta Deve ser Seguida?</label>
+          <select id="conduta_emergencia">
+            <option value="">Selecione...</option>
+            <option>Aceitar decisões médicas</option>
+            <option>Aguardar acompanhamento dos pais/responsáveis</option>
+          </select>
+        </div>
+
+        <!-- Contato de Emergência -->
+        <div class="field col-2">
+          <label>Contato de Emergência <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="contato_emergencia" value="Pais/Responsáveis" onchange="toggleConditional('cond-contato_emerg','Outros',this)" /> Pais/Responsáveis</label>
+            <label><input type="radio" name="contato_emergencia" value="Outros" onchange="toggleConditional('cond-contato_emerg','Outros',this)" /> Outros</label>
+          </div>
+          <span class="error-msg" id="err-contato_emergencia">Selecione uma opção.</span>
+        </div>
+        <div class="conditional" id="cond-contato_emerg">
+          <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="field">
+              <label>Nome do Contato de Emergência</label>
+              <input type="text" id="nome_contato_emerg" placeholder="Nome completo" />
+            </div>
+            <div class="field">
+              <label>Telefone do Contato de Emergência</label>
+              <input type="tel" id="tel_contato_emerg" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(this)" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /sec-6 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 7 – FICHA MÉDICA: OBSERVAÇÕES
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section" id="sec-7">
+      <div class="section-header">
+        <div class="section-icon">📝</div>
+        <div>
+          <h2>Ficha Médica – Observações</h2>
+          <p>Informações adicionais que julgar relevante</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="info-box col-2">
+          Inclua aqui qualquer informação médica adicional que não foi contemplada nas seções anteriores e que seja importante para os líderes escoteiros.
+        </div>
+        <div class="field col-2">
+          <label>Observações Gerais</label>
+          <textarea id="obs_medica" placeholder="Descreva aqui qualquer informação adicional relevante..." rows="5"></textarea>
+        </div>
+      </div>
+    </div><!-- /sec-7 -->
+
+
+    <!-- ═══════════════════════════════════════════════
+         SEÇÃO 8 – RESPONSÁVEIS
+    ═══════════════════════════════════════════════ -->
+    <div class="form-section" id="sec-8">
+      <div class="section-header">
+        <div class="section-icon">👨‍👩‍👧</div>
+        <div>
+          <h2>Responsáveis</h2>
+          <p>Obrigatório para menores de idade. Preencha ao menos o 1° responsável.</p>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-bottom:24px;">
+        Esta seção é obrigatória para candidatos menores de 18 anos. O 2° responsável é opcional.
+      </div>
+
+      <!-- 1° RESPONSÁVEL -->
+      <div class="responsavel-block">
+        <h3>1° Responsável <span class="badge">Obrigatório (para menores)</span></h3>
+        <div class="form-grid">
+
+          <div class="field col-1">
+            <label>Parentesco <span class="req" id="req-resp1">*</span></label>
+            <select id="parentesco_1">
+              <option value="">Selecione...</option>
+              <option>Pai</option>
+              <option>Mãe</option>
+              <option>Tutor(a)</option>
+            </select>
+            <span class="error-msg" id="err-parentesco_1">Campo obrigatório para menores.</span>
+          </div>
+
+          <div class="field col-1">
+            <label>Sexo <span class="req">*</span></label>
+            <div class="radio-group">
+              <label><input type="radio" name="sexo_resp1" value="Feminino" /> Feminino</label>
+              <label><input type="radio" name="sexo_resp1" value="Masculino" /> Masculino</label>
+            </div>
+            <span class="error-msg" id="err-sexo_resp1">Selecione uma opção.</span>
+          </div>
+
+          <div class="field col-2">
+            <label>Nome Completo <span class="req">*</span></label>
+            <input type="text" id="nome_resp1" placeholder="Nome completo do responsável" />
+            <span class="error-msg" id="err-nome_resp1">Campo obrigatório para menores.</span>
+          </div>
+
+          <div class="field col-1">
+            <label>Profissão <span class="req">*</span></label>
+            <input type="text" id="profissao_resp1" placeholder="Profissão do responsável" />
+            <span class="error-msg" id="err-profissao_resp1">Campo obrigatório para menores.</span>
+          </div>
+
+          <div class="field col-1">
+            <label>CPF <span class="req">*</span></label>
+            <input type="text" id="cpf_resp1" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)" />
+            <span class="error-msg" id="err-cpf_resp1">CPF inválido ou obrigatório.</span>
+          </div>
+
+          <div class="field col-2">
+            <label>Endereço <span class="req">*</span></label>
+            <div class="radio-group">
+              <label><input type="radio" name="end_resp1" value="Mesmo Endereço" onchange="toggleConditional('cond-end_resp1','Novo Endereço',this)" /> Mesmo Endereço do Candidato</label>
+              <label><input type="radio" name="end_resp1" value="Novo Endereço" onchange="toggleConditional('cond-end_resp1','Novo Endereço',this)" /> Novo Endereço</label>
+            </div>
+            <span class="error-msg" id="err-end_resp1">Selecione uma opção.</span>
+          </div>
+
+          <div class="conditional" id="cond-end_resp1">
+            <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="field" style="grid-column:span 2;">
+                <label>CEP</label>
+                <input type="text" id="cep_resp1" placeholder="00000-000" maxlength="9" oninput="maskCEP(this)" onblur="buscaCEPResp(1)" />
+              </div>
+              <div class="field" style="grid-column:span 2;">
+                <label>Endereço</label>
+                <input type="text" id="endereco_resp1" placeholder="Rua / Avenida..." />
+              </div>
+              <div class="field">
+                <label>Número</label>
+                <input type="text" id="numero_resp1" placeholder="Número" />
+              </div>
+              <div class="field">
+                <label>Complemento</label>
+                <input type="text" id="compl_resp1" placeholder="Apto, Bloco..." />
+              </div>
+              <div class="field">
+                <label>Bairro</label>
+                <input type="text" id="bairro_resp1" placeholder="Bairro" />
+              </div>
+              <div class="field">
+                <label>Cidade</label>
+                <input type="text" id="cidade_resp1" placeholder="Cidade" />
+              </div>
+              <div class="field">
+                <label>Estado</label>
+                <select id="estado_resp1">
+                  <option value="">UF</option>
+                  <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                  <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                  <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                  <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                  <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                  <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                  <option>SP</option><option>SE</option><option>TO</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /resp1 -->
+
+      <!-- 2° RESPONSÁVEL -->
+      <div class="responsavel-block">
+        <h3>2° Responsável <span class="badge">Opcional</span></h3>
+        <div class="form-grid">
+
+          <div class="field col-1">
+            <label>Parentesco</label>
+            <select id="parentesco_2">
+              <option value="">Selecione...</option>
+              <option>Pai</option>
+              <option>Mãe</option>
+              <option>Tutor(a)</option>
+            </select>
+          </div>
+
+          <div class="field col-1">
+            <label>Sexo</label>
+            <div class="radio-group">
+              <label><input type="radio" name="sexo_resp2" value="Feminino" /> Feminino</label>
+              <label><input type="radio" name="sexo_resp2" value="Masculino" /> Masculino</label>
+            </div>
+          </div>
+
+          <div class="field col-2">
+            <label>Nome Completo</label>
+            <input type="text" id="nome_resp2" placeholder="Nome completo do 2° responsável (opcional)" />
+          </div>
+
+          <div class="field col-1">
+            <label>Profissão</label>
+            <input type="text" id="profissao_resp2" placeholder="Profissão" />
+          </div>
+
+          <div class="field col-1">
+            <label>CPF</label>
+            <input type="text" id="cpf_resp2" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)" />
+          </div>
+
+          <div class="field col-2">
+            <label>Endereço</label>
+            <div class="radio-group">
+              <label><input type="radio" name="end_resp2" value="Mesmo Endereço" onchange="toggleConditional('cond-end_resp2','Novo Endereço',this)" /> Mesmo Endereço do Candidato</label>
+              <label><input type="radio" name="end_resp2" value="Novo Endereço" onchange="toggleConditional('cond-end_resp2','Novo Endereço',this)" /> Novo Endereço</label>
+            </div>
+          </div>
+
+          <div class="conditional" id="cond-end_resp2">
+            <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="field" style="grid-column:span 2;">
+                <label>CEP</label>
+                <input type="text" id="cep_resp2" placeholder="00000-000" maxlength="9" oninput="maskCEP(this)" onblur="buscaCEPResp(2)" />
+              </div>
+              <div class="field" style="grid-column:span 2;">
+                <label>Endereço</label>
+                <input type="text" id="endereco_resp2" placeholder="Rua / Avenida..." />
+              </div>
+              <div class="field">
+                <label>Número</label>
+                <input type="text" id="numero_resp2" placeholder="Número" />
+              </div>
+              <div class="field">
+                <label>Complemento</label>
+                <input type="text" id="compl_resp2" placeholder="Apto, Bloco..." />
+              </div>
+              <div class="field">
+                <label>Bairro</label>
+                <input type="text" id="bairro_resp2" placeholder="Bairro" />
+              </div>
+              <div class="field">
+                <label>Cidade</label>
+                <input type="text" id="cidade_resp2" placeholder="Cidade" />
+              </div>
+              <div class="field">
+                <label>Estado</label>
+                <select id="estado_resp2">
+                  <option value="">UF</option>
+                  <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                  <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                  <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                  <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                  <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                  <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                  <option>SP</option><option>SE</option><option>TO</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /resp2 -->
+
+    </div><!-- /sec-8 -->
+
+
+    <!-- ═══ BOTÕES DE NAVEGAÇÃO ═══ -->
+    <div class="btn-row" id="btn-row">
+      <button class="btn btn-back" id="btn-back" onclick="prevSection()" style="display:none">
+        ← Voltar
+      </button>
+      <div style="flex:1"></div>
+      <button class="btn btn-next" id="btn-next" onclick="nextSection()">
+        Próximo →
+      </button>
+      <button class="btn btn-submit" id="btn-submit" onclick="submitForm()" style="display:none">
+        ✅ Enviar Cadastro
+      </button>
+    </div>
+
+    <!-- MENSAGEM DE SUCESSO -->
+    <div id="success-msg">
+      <div class="check-circle">✅</div>
+      <h2>Cadastro Enviado com Sucesso!</h2>
+      <p>Obrigado por se cadastrar no Grupo Escoteiro Gelan.<br>Em breve entraremos em contato com mais informações.</p>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /wrapper -->
+
+<script>
+  /* ════════════════════════════════════
+     CONFIGURAÇÃO DAS SEÇÕES
+  ════════════════════════════════════ */
+  const SECTIONS = [
+    { id: 'sec-1', label: 'Dados Pessoais',            icon: '👤' },
+    { id: 'sec-2', label: 'Informações Acad.',         icon: '🎓' },
+    { id: 'sec-3', label: 'Endereço',                  icon: '🏠' },
+    { id: 'sec-4', label: 'Dados Biométricos',         icon: '📏' },
+    { id: 'sec-5', label: 'Saúde Física/Mental',       icon: '🩺' },
+    { id: 'sec-6', label: 'Inf. Gerais',               icon: '📋' },
+    { id: 'sec-7', label: 'Observações',               icon: '📝' },
+    { id: 'sec-8', label: 'Responsáveis',              icon: '👨‍👩‍👧' },
+  ];
+  let current = 0;
+
+  /* ── Inicializa dots de progresso ── */
+  function buildDots() {
+    const container = document.getElementById('steps-dots');
+    container.innerHTML = '';
+    SECTIONS.forEach((s, i) => {
+      const d = document.createElement('div');
+      d.className = 'step-dot' + (i === 0 ? ' active' : '');
+      d.id = 'dot-' + i;
+      d.innerHTML = `<div class="dot"></div>${s.icon}`;
+      d.title = s.label;
+      container.appendChild(d);
+    });
+  }
+  buildDots();
+
+  /* ── Verifica se é a última seção efetiva ── */
+  function isLastSection() {
+    // sec-8 (índice 7) só aparece para menores; para maiores, sec-7 (índice 6) já é a última
+    return current === SECTIONS.length - 1 ||
+           (current === SECTIONS.length - 2 && !checkMinor());
+  }
+
+  /* ── Atualiza progresso ── */
+  function updateProgress() {
+    const minor = checkMinor();
+    const effectiveTotal   = minor ? SECTIONS.length : SECTIONS.length - 1;
+    const effectiveCurrent = Math.min(current + 1, effectiveTotal);
+    const pct = (effectiveCurrent / effectiveTotal * 100).toFixed(1);
+
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-label').textContent = `Etapa ${effectiveCurrent} de ${effectiveTotal}`;
+    document.getElementById('prog-section-name').textContent = SECTIONS[current].label;
+
+    SECTIONS.forEach((_, i) => {
+      const dot = document.getElementById('dot-' + i);
+      // Dot de Responsáveis fica desabilitado visualmente quando não é menor
+      if (i === SECTIONS.length - 1 && !minor) {
+        dot.className = 'step-dot disabled';
+        dot.title = 'Responsáveis – apenas para menores de 18 anos';
+      } else {
+        dot.className = 'step-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+      }
+    });
+
+    document.getElementById('btn-back').style.display   = current === 0 ? 'none' : 'flex';
+    document.getElementById('btn-next').style.display   = isLastSection() ? 'none' : 'flex';
+    document.getElementById('btn-submit').style.display = isLastSection() ? 'flex' : 'none';
+  }
+
+  /* ════════════════════════════════════
+     NAVEGAÇÃO
+  ════════════════════════════════════ */
+  function showSection(idx) {
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(SECTIONS[idx].id).classList.add('active');
+    current = idx;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextSection() {
+    if (!validateSection(current)) return;
+    // Se está na penúltima seção (sec-7) e o candidato não é menor, encerra o formulário
+    if (current === SECTIONS.length - 2 && !checkMinor()) {
+      submitForm();
+      return;
+    }
+    if (current < SECTIONS.length - 1) showSection(current + 1);
+  }
+
+  function prevSection() {
+    if (current > 0) showSection(current - 1);
+  }
+
+  /* ════════════════════════════════════
+     VALIDAÇÕES
+  ════════════════════════════════════ */
+  function setInvalid(id, show) {
+    const el = document.getElementById(id);
+    const err = document.getElementById('err-' + id);
+    if (el) el.classList.toggle('invalid', show);
+    if (err) err.classList.toggle('show', show);
+  }
+
+  function clearError(id) { setInvalid(id, false); }
+
+  function getRadioValue(name) {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    return checked ? checked.value : '';
+  }
+
+  function getCheckboxValues(name) {
+    return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(c => c.value);
+  }
+
+  function validateSection(idx) {
+    let ok = true;
+
+    if (idx === 0) { // Dados Pessoais
+      const fields = ['nome_candidato','cpf','email','celular','etnia','estado_civil'];
+      fields.forEach(f => {
+        const val = (document.getElementById(f)?.value || '').trim();
+        const invalid = val === '';
+        setInvalid(f, invalid);
+        if (invalid) ok = false;
+      });
+      // Data de nascimento: obrigatória e deve ser estritamente anterior a hoje
+      const dnVal = (document.getElementById('data_nascimento')?.value || '').trim();
+      const today = new Date(); today.setHours(0,0,0,0);
+      const dnDate = dnVal ? new Date(dnVal + 'T00:00:00') : null;
+      if (!dnVal || !dnDate || dnDate >= today) {
+        setInvalid('data_nascimento', true); ok = false;
+      } else {
+        setInvalid('data_nascimento', false);
+      }
+      // CPF format
+      if (document.getElementById('cpf').value && !validCPF(document.getElementById('cpf').value)) {
+        setInvalid('cpf', true); ok = false;
+      }
+      // email
+      if (document.getElementById('email').value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value)) {
+        setInvalid('email', true); ok = false;
+      }
+      // celular - 15 chars "(00) 00000-0000"
+      const cel = document.getElementById('celular').value.replace(/\D/g,'');
+      if (!cel || cel.length < 10) { setInvalid('celular', true); ok = false; }
+
+      // radios
+      ['sexo','estrangeiro'].forEach(name => {
+        if (!getRadioValue(name)) { setInvalid(name, true); ok = false; }
+        else setInvalid(name, false);
+      });
+
+      // estado nascimento only if not foreign
+      if (getRadioValue('estrangeiro') !== 'Sim') {
+        const enEl = document.getElementById('estado_nascimento');
+        if (!enEl.value) { setInvalid('estado_nascimento', true); ok = false; }
+        else setInvalid('estado_nascimento', false);
+      }
+      const cnEl = document.getElementById('cidade_nascimento');
+      if (!cnEl.value.trim()) { setInvalid('cidade_nascimento', true); ok = false; }
+
+      const pnEl = document.getElementById('pais_nascimento');
+      if (!pnEl.value.trim()) { setInvalid('pais_nascimento', true); ok = false; }
+    }
+
+    if (idx === 1) { // Informações acadêmicas
+      ['escolaridade','profissao'].forEach(f => {
+        const val = (document.getElementById(f)?.value || '').trim();
+        const invalid = val === '';
+        setInvalid(f, invalid);
+        if (invalid) ok = false;
+      });
+    }
+
+    if (idx === 2) { // Endereço
+      ['cep','endereco','numero_end','bairro','cidade_end','estado_end'].forEach(f => {
+        const val = (document.getElementById(f)?.value || '').trim();
+        const invalid = val === '';
+        setInvalid(f, invalid);
+        if (invalid) ok = false;
+      });
+      const cepVal = document.getElementById('cep').value.replace(/\D/g,'');
+      if (cepVal.length !== 8) { setInvalid('cep', true); ok = false; }
+    }
+
+    if (idx === 3) { // Dados biométricos
+      ['altura','peso','tipo_sanguineo'].forEach(f => {
+        const val = (document.getElementById(f)?.value || '').trim();
+        const invalid = val === '';
+        setInvalid(f, invalid);
+        if (invalid) ok = false;
+      });
+      if (!getRadioValue('fator_rh')) { setInvalid('fator_rh', true); ok = false; }
+      else setInvalid('fator_rh', false);
+    }
+
+    if (idx === 4) { // Saúde física e mental
+      const radios = ['eq_auxilio','acomp_medico','prob_cronico','transtorno','med_transtorno','acomp_profissional','usa_medicamento'];
+      radios.forEach(name => {
+        if (!getRadioValue(name)) { setInvalid(name, true); ok = false; }
+        else setInvalid(name, false);
+      });
+      // alergias
+      const al = (document.getElementById('alergias')?.value || '').trim();
+      if (!al) { setInvalid('alergias', true); ok = false; }
+      // checkboxes - at least one each
+      if (getCheckboxValues('condicoes').length === 0) { setInvalid('condicoes', true); ok = false; }
+      else setInvalid('condicoes', false);
+      if (getCheckboxValues('comportamentos').length === 0) { setInvalid('comportamentos', true); ok = false; }
+      else setInvalid('comportamentos', false);
+    }
+
+    if (idx === 5) { // Informações gerais
+      const radios = ['impeditivo_fisico','restricao_alimentar','sabe_nadar','sonambulo','plano_saude','medico_pref'];
+      radios.forEach(name => {
+        if (!getRadioValue(name)) { setInvalid(name, true); ok = false; }
+        else setInvalid(name, false);
+      });
+      if (!getRadioValue('contato_emergencia')) { setInvalid('contato_emergencia', true); ok = false; }
+      else setInvalid('contato_emergencia', false);
+    }
+
+    if (idx === 7) { // Responsáveis – obrigatório só se menor
+      const isMinor = checkMinor();
+      if (isMinor) {
+        ['parentesco_1','nome_resp1','profissao_resp1','cpf_resp1'].forEach(f => {
+          const val = (document.getElementById(f)?.value || '').trim();
+          if (!val) { setInvalid(f, true); ok = false; }
+          else setInvalid(f, false);
+        });
+        if (!getRadioValue('sexo_resp1')) { setInvalid('sexo_resp1', true); ok = false; }
+        else setInvalid('sexo_resp1', false);
+        if (!getRadioValue('end_resp1')) { setInvalid('end_resp1', true); ok = false; }
+        else setInvalid('end_resp1', false);
+        // CPF
+        if (document.getElementById('cpf_resp1').value && !validCPF(document.getElementById('cpf_resp1').value)) {
+          setInvalid('cpf_resp1', true); ok = false;
+        }
+      }
+    }
+
+    if (!ok) {
+      const firstErr = document.querySelector('.invalid, .error-msg.show');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return ok;
+  }
+
+  /* ════════════════════════════════════
+     CAMPOS CONDICIONAIS
+  ════════════════════════════════════ */
+  function toggleConditional(blockId, triggerValue, radioEl) {
+    const block = document.getElementById(blockId);
+    if (!block) return;
+    block.classList.toggle('show', radioEl.value === triggerValue);
+  }
+
+  function toggleEstrangeiro() {
+    const isForeign = getRadioValue('estrangeiro') === 'Sim';
+    const stateField = document.getElementById('field-estado-nasc');
+    const pais = document.getElementById('pais_nascimento');
+    stateField.style.display = isForeign ? 'none' : '';
+    if (!isForeign) pais.value = 'Brasil';
+    else pais.value = '';
+  }
+
+  function handleNenhumaCheck(el, name) {
+    const isNenhuma = el.value === 'Nenhuma' || el.value === 'Nenhum';
+    const others = [...document.querySelectorAll(`input[name="${name}"]`)].filter(cb => cb !== el);
+
+    if (isNenhuma) {
+      // "Nenhuma/Nenhum" marcado: desmarca e desabilita todos os outros
+      others.forEach(cb => {
+        cb.checked = false;
+        cb.disabled = el.checked;
+        cb.closest('label').style.opacity   = el.checked ? '0.4' : '1';
+        cb.closest('label').style.cursor    = el.checked ? 'not-allowed' : 'pointer';
+        cb.closest('label').style.pointerEvents = el.checked ? 'none' : '';
+      });
+    } else {
+      // Outro item marcado: desmarca o "Nenhuma/Nenhum" (e garante que está habilitado)
+      const nenhuma = document.querySelector(
+        `input[name="${name}"][value="Nenhuma"], input[name="${name}"][value="Nenhum"]`
+      );
+      if (nenhuma) nenhuma.checked = false;
+    }
+  }
+
+  /* ════════════════════════════════════
+     MÁSCARAS
+  ════════════════════════════════════ */
+  function maskCPF(el) {
+    let v = el.value.replace(/\D/g,'').slice(0,11);
+    if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+    else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d+)/,'$1.$2.$3');
+    else if (v.length > 3) v = v.replace(/(\d{3})(\d+)/,'$1.$2');
+    el.value = v;
+  }
+
+  function maskPhone(el) {
+    let v = el.value.replace(/\D/g,'').slice(0,11);
+    if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');
+    else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d+)/,'($1) $2-$3');
+    else if (v.length > 2) v = v.replace(/(\d{2})(\d+)/,'($1) $2');
+    el.value = v;
+  }
+
+  function maskCEP(el) {
+    let v = el.value.replace(/\D/g,'').slice(0,8);
+    if (v.length > 5) v = v.replace(/(\d{5})(\d+)/,'$1-$2');
+    el.value = v;
+  }
+
+  /* ════════════════════════════════════
+     BUSCA CEP (ViaCEP)
+  ════════════════════════════════════ */
+  async function buscaCEP() {
+    const cep = document.getElementById('cep').value.replace(/\D/g,'');
+    if (cep.length !== 8) return;
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await res.json();
+      if (!data.erro) {
+        document.getElementById('endereco').value   = data.logradouro || '';
+        document.getElementById('bairro').value     = data.bairro     || '';
+        document.getElementById('cidade_end').value = data.localidade || '';
+        document.getElementById('estado_end').value = data.uf         || '';
+      }
+    } catch(e) { /* silently ignore */ }
+  }
+
+  async function buscaCEPResp(num) {
+    const cep = document.getElementById(`cep_resp${num}`).value.replace(/\D/g,'');
+    if (cep.length !== 8) return;
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await res.json();
+      if (!data.erro) {
+        document.getElementById(`endereco_resp${num}`).value = data.logradouro || '';
+        document.getElementById(`bairro_resp${num}`).value   = data.bairro     || '';
+        document.getElementById(`cidade_resp${num}`).value   = data.localidade || '';
+        document.getElementById(`estado_resp${num}`).value   = data.uf         || '';
+      }
+    } catch(e) {}
+  }
+
+  /* ════════════════════════════════════
+     VALIDAÇÃO CPF
+  ════════════════════════════════════ */
+  function validCPF(cpf) {
+    cpf = cpf.replace(/\D/g,'');
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+    let sum = 0, rest;
+    for (let i=1; i<=9; i++) sum += parseInt(cpf[i-1]) * (11-i);
+    rest = (sum*10) % 11;
+    if (rest === 10 || rest === 11) rest = 0;
+    if (rest !== parseInt(cpf[9])) return false;
+    sum = 0;
+    for (let i=1; i<=10; i++) sum += parseInt(cpf[i-1]) * (12-i);
+    rest = (sum*10) % 11;
+    if (rest === 10 || rest === 11) rest = 0;
+    return rest === parseInt(cpf[10]);
+  }
+
+  /* ════════════════════════════════════
+     VERIFICAR MENOR DE IDADE
+  ════════════════════════════════════ */
+  function checkMinor() {
+    const dn = document.getElementById('data_nascimento')?.value;
+    if (!dn) return false;
+    const diff = Date.now() - new Date(dn).getTime();
+    return diff / (1000*60*60*24*365.25) < 18;
+  }
+
+  /* ════════════════════════════════════
+     COLETA DE DADOS DO FORMULÁRIO
+  ════════════════════════════════════ */
+  function collectFormData() {
+    const g = id => (document.getElementById(id)?.value || '').trim();
+    const r = name => getRadioValue(name);
+    const c = name => getCheckboxValues(name);
+
+    return {
+      // ── Dados Pessoais ──
+      nome_candidato:    g('nome_candidato'),
+      nome_social:       g('nome_social'),
+      data_nascimento:   g('data_nascimento'),
+      sexo:              r('sexo'),
+      etnia:             g('etnia'),
+      estado_civil:      g('estado_civil'),
+      estrangeiro:       r('estrangeiro'),
+      pais_nascimento:   g('pais_nascimento'),
+      estado_nascimento: g('estado_nascimento'),
+      cidade_nascimento: g('cidade_nascimento'),
+      rg:                g('rg'),
+      orgao_expeditor:   g('orgao_expeditor'),
+      cpf:               g('cpf'),
+      religiao:          g('religiao'),
+      email:             g('email'),
+      celular:           g('celular'),
+      // ── Informações Acadêmicas ──
+      escolaridade:      g('escolaridade'),
+      profissao:         g('profissao'),
+      // ── Endereço ──
+      cep:               g('cep'),
+      endereco:          g('endereco'),
+      numero_end:        g('numero_end'),
+      complemento:       g('complemento'),
+      bairro:            g('bairro'),
+      cidade_end:        g('cidade_end'),
+      estado_end:        g('estado_end'),
+      // ── Dados Biométricos ──
+      altura:            g('altura'),
+      peso:              g('peso'),
+      tipo_sanguineo:    g('tipo_sanguineo'),
+      fator_rh:          r('fator_rh'),
+      // ── Saúde Física e Mental ──
+      eq_auxilio:        r('eq_auxilio'),
+      desc_eq_auxilio:   g('desc_eq_auxilio'),
+      acomp_medico:      r('acomp_medico'),
+      desc_acomp_medico: g('desc_acomp_medico'),
+      prob_cronico:      r('prob_cronico'),
+      desc_prob_cronico: g('desc_prob_cronico'),
+      alergias:          g('alergias'),
+      transtorno:        r('transtorno'),
+      desc_transtorno:   g('desc_transtorno'),
+      med_transtorno:    r('med_transtorno'),
+      desc_med_transtorno: g('desc_med_transtorno'),
+      acomp_profissional: r('acomp_profissional'),
+      condicoes:         c('condicoes'),
+      comportamentos:    c('comportamentos'),
+      usa_medicamento:   r('usa_medicamento'),
+      desc_medicamentos: g('desc_medicamentos'),
+      // ── Informações Gerais ──
+      impeditivo_fisico:       r('impeditivo_fisico'),
+      desc_impeditivo_fisico:  g('desc_impeditivo_fisico'),
+      restricao_alimentar:     r('restricao_alimentar'),
+      desc_restricao_alimentar: g('desc_restricao_alimentar'),
+      sabe_nadar:              r('sabe_nadar'),
+      sonambulo:               r('sonambulo'),
+      plano_saude:             r('plano_saude'),
+      nome_plano_saude:        g('nome_plano_saude'),
+      num_carteirinha:         g('num_carteirinha'),
+      medico_pref:             r('medico_pref'),
+      nome_medico_pref:        g('nome_medico_pref'),
+      contato_medico_pref:     g('contato_medico_pref'),
+      conduta_emergencia:      g('conduta_emergencia'),
+      contato_emergencia:      r('contato_emergencia'),
+      nome_contato_emerg:      g('nome_contato_emerg'),
+      tel_contato_emerg:       g('tel_contato_emerg'),
+      // ── Observações ──
+      obs_medica:              g('obs_medica'),
+      // ── 1° Responsável ──
+      parentesco_1:   g('parentesco_1'),
+      sexo_resp1:     r('sexo_resp1'),
+      nome_resp1:     g('nome_resp1'),
+      profissao_resp1: g('profissao_resp1'),
+      cpf_resp1:      g('cpf_resp1'),
+      end_resp1:      r('end_resp1'),
+      cep_resp1:      g('cep_resp1'),
+      endereco_resp1: g('endereco_resp1'),
+      numero_resp1:   g('numero_resp1'),
+      compl_resp1:    g('compl_resp1'),
+      bairro_resp1:   g('bairro_resp1'),
+      cidade_resp1:   g('cidade_resp1'),
+      estado_resp1:   g('estado_resp1'),
+      // ── 2° Responsável ──
+      parentesco_2:   g('parentesco_2'),
+      sexo_resp2:     r('sexo_resp2'),
+      nome_resp2:     g('nome_resp2'),
+      profissao_resp2: g('profissao_resp2'),
+      cpf_resp2:      g('cpf_resp2'),
+      end_resp2:      r('end_resp2'),
+      cep_resp2:      g('cep_resp2'),
+      endereco_resp2: g('endereco_resp2'),
+      numero_resp2:   g('numero_resp2'),
+      compl_resp2:    g('compl_resp2'),
+      bairro_resp2:   g('bairro_resp2'),
+      cidade_resp2:   g('cidade_resp2'),
+      estado_resp2:   g('estado_resp2'),
+    };
+  }
+
+  /* ════════════════════════════════════
+     SUBMISSÃO
+  ════════════════════════════════════ */
+
+  // ⚠️  Cole aqui a URL do seu Apps Script Web App após implantar o Code.gs
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMjIbgdEYUcqOc1PPuIg9_xmWapA4E37IBwc0_0xg93B63_JwQMwXt64XAQxMyYjTa/exec';
+
+  async function submitForm() {
+    if (!validateSection(current)) return;
+
+    // Estado: enviando
+    const btnSubmit = document.getElementById('btn-submit');
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite">⏳</span> Enviando...';
+
+    const data = collectFormData();
+
+    // Se SCRIPT_URL não foi configurado, apenas exibe sucesso (modo demo)
+    if (!SCRIPT_URL || SCRIPT_URL === 'COLE_AQUI_A_URL_DO_APPS_SCRIPT') {
+      console.warn('SCRIPT_URL não configurada. Dados coletados:', data);
+      showSuccess();
+      return;
+    }
+
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method:  'POST',
+        mode:    'no-cors',           // Apps Script não envia CORS headers em erros
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(data),
+      });
+      // no-cors sempre retorna opaque response; assumimos sucesso se não lançou
+      showSuccess();
+    } catch (err) {
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '✅ Enviar Cadastro';
+      showError('Não foi possível enviar o cadastro. Verifique sua conexão e tente novamente.');
+      console.error(err);
+    }
+  }
+
+  function showSuccess() {
+    document.getElementById('btn-row').style.display    = 'none';
+    document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
+    document.getElementById('success-msg').style.display = 'block';
+    document.querySelector('.progress-wrapper').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(msg) {
+    let box = document.getElementById('submit-error');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'submit-error';
+      box.style.cssText = 'margin-top:16px;padding:12px 16px;background:#ffebee;border:1.5px solid #d32f2f;border-radius:8px;color:#b71c1c;font-size:.9rem;';
+      document.getElementById('btn-row').after(box);
+    }
+    box.textContent = '⚠️ ' + msg;
+    box.style.display = 'block';
+  }
+
+  /* ── Inicia ── */
+  updateProgress();
+
+  // Define data máxima do campo nascimento como ontem (não permite hoje nem futuro)
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const maxDate = yesterday.toISOString().split('T')[0];
+  document.getElementById('data_nascimento').setAttribute('max', maxDate);
+
+  /* ── Limpa erros ao digitar ── */
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('input', () => { el.classList.remove('invalid'); });
+    el.addEventListener('change', () => { el.classList.remove('invalid'); });
+  });
+</script>
+</body>
+</html>
